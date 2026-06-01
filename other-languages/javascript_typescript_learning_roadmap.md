@@ -48,7 +48,11 @@ The goal is to become someone who understands why JS/TS programs behave the way 
 
 ---
 
-## 2. JavaScript Runtime Fundamentals
+## 2. Stage One: JavaScript Runtime Foundations
+
+The first stage is understanding how JavaScript actually executes. JavaScript is not difficult because of syntax — it is difficult because of its runtime model. Most "weird JS" stories trace back to a handful of concepts: references, scope, closures, `this`, and prototypes. Get these right and modern features start to look like ergonomic shortcuts rather than magic.
+
+### 2.1 JavaScript Runtime Fundamentals
 
 JavaScript is not difficult because of syntax. It is difficult because of its runtime model.
 
@@ -67,9 +71,9 @@ You should systematically learn:
 - Event loop
 - Promise and async execution
 
-### Key Concepts
+#### Key Concepts
 
-#### Values, Objects, and References
+##### Values, Objects, and References
 
 You need to understand how references are shared:
 
@@ -83,7 +87,7 @@ console.log(a.count) // 2
 
 This affects almost every modern JS/TS program, including React state updates, caches, memoization, data transformation, and API response handling.
 
-#### Scope and Closure
+##### Scope and Closure
 
 Closures are central to JavaScript:
 
@@ -106,7 +110,7 @@ You should understand:
 - Closure over variables, not just values
 - Closure in callbacks, event handlers, async code, and React hooks
 
-#### `this`
+##### `this`
 
 `this` is determined by how a function is called, not where it is defined.
 
@@ -119,7 +123,7 @@ You should understand:
 - `bind`, `call`, and `apply`
 - Class methods and lost `this`
 
-#### Prototypes and Classes
+##### Prototypes and Classes
 
 JavaScript classes are built on top of prototypes.
 
@@ -136,7 +140,7 @@ Modern code may use classes or composition, but prototypes remain essential to u
 
 ---
 
-## 3. Modern JavaScript Language Features
+### 2.2 Modern JavaScript Language Features
 
 After understanding the runtime model, become comfortable with modern JavaScript syntax and idioms:
 
@@ -174,7 +178,11 @@ A mature JavaScript developer should understand whether each operation mutates d
 
 ---
 
-## 4. Asynchronous JavaScript
+## 3. Stage Two: Asynchronous JavaScript
+
+Asynchronous programming deserves its own stage. The JavaScript event loop and the Promise model shape almost every real program — frontend rendering, network calls, file IO, timers — and this is also where most subtle bugs live. Learn it deliberately rather than picking it up by osmosis from framework code.
+
+### 3.1 Asynchronous JavaScript
 
 Asynchronous programming is one of the most important parts of JS/TS.
 
@@ -195,7 +203,7 @@ You should learn:
 - Async iterator
 - Streams
 
-### Event Loop
+### 3.2 Event Loop
 
 You must understand:
 
@@ -243,7 +251,11 @@ What does an async function return?
 
 ---
 
-## 5. TypeScript as Typed JavaScript
+## 4. Stage Three: TypeScript Fundamentals
+
+The next stage is putting types on the JavaScript you already understand. TypeScript is not a separate runtime — it is a typed development layer over the JS semantics from Stage One. Begin by learning the basic type system and the crucial principle that types are erased at runtime.
+
+### 4.1 TypeScript as Typed JavaScript
 
 TypeScript should be understood as a typed layer over JavaScript, not as a separate runtime language.
 
@@ -267,7 +279,7 @@ TypeScript improves compile-time safety, but runtime data still needs runtime va
 
 ---
 
-## 6. TypeScript Fundamentals
+### 4.2 TypeScript Fundamentals
 
 Learn the basic type system first:
 
@@ -298,7 +310,11 @@ The real value of TypeScript is type modeling.
 
 ---
 
-## 7. Type Modeling with TypeScript
+## 5. Stage Four: Type Modeling and Runtime Validation
+
+This is the stage where TypeScript starts paying for itself. You stop annotating values and start designing types: discriminated unions for state, generics for reuse, branded types for domain identity. Pair that with runtime validation at every boundary, because the compiler trusts your annotations but the network and disk do not.
+
+### 5.1 Type Modeling with TypeScript
 
 TypeScript becomes powerful when you model state, errors, and API boundaries.
 
@@ -323,9 +339,9 @@ type Payment =
 
 This allows the compiler to help you prevent invalid states.
 
-### Important TypeScript Concepts
+#### Important TypeScript Concepts
 
-#### Narrowing
+##### Narrowing
 
 Learn:
 
@@ -348,7 +364,7 @@ function render(value: string | number) {
 }
 ```
 
-#### Discriminated Unions
+##### Discriminated Unions
 
 Use them to model state and errors:
 
@@ -358,7 +374,7 @@ type Result<T, E> =
   | { ok: false; error: E }
 ```
 
-#### Generics
+##### Generics
 
 Generics are essential for reusable TypeScript:
 
@@ -378,7 +394,7 @@ Learn:
 - `keyof`
 - Indexed access types
 
-#### Utility Types
+##### Utility Types
 
 Important built-in utility types:
 
@@ -397,7 +413,7 @@ Extract<T, U>
 Exclude<T, U>
 ```
 
-#### Structural Typing
+##### Structural Typing
 
 TypeScript uses structural typing:
 
@@ -417,7 +433,7 @@ Example:
 type UserId = string & { readonly brand: unique symbol }
 ```
 
-#### Conditional and Mapped Types
+##### Conditional and Mapped Types
 
 Learn these after you are comfortable with everyday TypeScript:
 
@@ -436,7 +452,7 @@ These are especially important for library design, schema inference, API clients
 
 ---
 
-## 8. Runtime Validation
+### 5.2 Runtime Validation
 
 All external input should be treated as untrusted:
 
@@ -481,7 +497,11 @@ This connects compile-time types with runtime safety.
 
 ---
 
-## 9. Modules, Packages, and Tooling
+## 6. Stage Five: Modules, Tooling, and Environments
+
+A program is more than its source. This stage covers how JS/TS code is packaged, configured, and executed — module systems, tsconfig, package managers, and the two main runtimes you will actually deploy to (browsers and Node.js). Learn enough of each to be deliberate, not exhaustive.
+
+### 6.1 Modules, Packages, and Tooling
 
 You should understand the module system:
 
@@ -543,7 +563,7 @@ Do not try to master every bundler immediately. Learn what problem each tool sol
 
 ---
 
-## 10. Minimal Browser Knowledge
+### 6.2 Minimal Browser Knowledge
 
 Frontend knowledge is useful, but it should not dominate this roadmap.
 
@@ -574,7 +594,7 @@ React can be learned later as an application context for JS/TS, not as the start
 
 ---
 
-## 11. Node.js Basics
+### 6.3 Node.js Basics
 
 Node.js helps you understand JavaScript outside the browser.
 
@@ -601,7 +621,11 @@ This allows you to build:
 
 ---
 
-## 12. Error Handling
+## 7. Stage Six: Error Handling and Testing
+
+The final stage of the knowledge map is how you make programs reliable. Errors and tests are not afterthoughts — they are how runtime behavior, async control flow, and types come together. Decide deliberately when to throw and when to return a Result, and treat tests as the place where async, time, and types are forced to behave.
+
+### 7.1 Error Handling
 
 JavaScript and TypeScript error handling should be studied deliberately.
 
@@ -641,7 +665,7 @@ You should understand:
 
 ---
 
-## 13. Testing
+### 7.2 Testing
 
 Testing is one of the best ways to learn JS/TS deeply.
 

@@ -37,7 +37,11 @@ Avoid starting with Cats, ZIO, tagless final, higher-kinded types, or advanced t
 
 ---
 
-## 2. Scala 3 Syntax and Expression-oriented Programming
+## 2. Stage One: Master Scala 3 Syntax and Data Modeling
+
+The first stage is becoming fluent in Scala 3 as an expression-oriented language with strong data modeling primitives. Before reaching for functional or type-level abstractions, you should be comfortable describing your domain with case classes, enums, and pattern matching, and processing data with the standard collection library.
+
+### 2.1 Scala 3 Syntax and Expression-oriented Programming
 
 Start with the core language:
 
@@ -60,7 +64,7 @@ val result =
 
 This is different from Java or Go, where many constructs are primarily statements.
 
-### What to learn
+#### What to learn
 
 - `val` versus `var`
 - Method definitions with `def`
@@ -81,9 +85,9 @@ module boundaries
 
 ---
 
-## 3. Data Modeling with Case Classes and Enums
+### 2.2 Data Modeling with Case Classes and Enums
 
-### Case Classes
+#### Case Classes
 
 `case class` is the core tool for immutable data modeling:
 
@@ -107,7 +111,7 @@ Example:
 val updated = user.copy(email = newEmail)
 ```
 
-### Enums
+#### Enums
 
 Scala 3 enums are very useful for modeling finite states and algebraic data types:
 
@@ -132,7 +136,7 @@ Avoid using raw strings or integers for domain states when an enum would be clea
 
 ---
 
-## 4. Pattern Matching
+### 2.3 Pattern Matching
 
 Pattern matching is central to Scala:
 
@@ -161,7 +165,7 @@ Good Scala code often combines type modeling with pattern matching to reduce ill
 
 ---
 
-## 5. Collections and Data Transformation
+### 2.4 Collections and Data Transformation
 
 Scala's collection library is powerful. Learn these types early:
 
@@ -209,9 +213,13 @@ fold     aggregates many values into one result
 
 ---
 
-## 6. Option, Either, and Typed Errors
+## 3. Stage Two: Functional Programming Foundations
 
-### Option
+Once you can model data, the next stage is composing it. This is where Scala starts to feel different from "Java with better syntax": errors are values, transformations are pipelines, and `for` is a sequencing operator over many shapes.
+
+### 3.1 Option, Either, and Typed Errors
+
+#### Option
 
 Use `Option[A]` to represent a value that may be absent:
 
@@ -221,7 +229,7 @@ def findUser(id: UserId): Option[User]
 
 Avoid `null` in Scala code.
 
-### Either
+#### Either
 
 Use `Either[E, A]` to represent a computation that may fail:
 
@@ -245,7 +253,7 @@ def parseEmail(raw: String): Either[ValidationError, Email]
 
 This makes error handling explicit, composable, and testable.
 
-### Try
+#### Try
 
 Use `Try[A]` mainly when working with exception-throwing APIs, especially Java APIs.
 
@@ -259,11 +267,11 @@ Exception-based computation: Try[A] or convert to Either
 
 ---
 
-## 7. Functional Programming Foundations
+### 3.2 Functional Programming Foundations
 
 You do not need to become a category theory expert to write good Scala, but you do need functional fundamentals.
 
-### Pure Functions
+#### Pure Functions
 
 A pure function:
 
@@ -281,7 +289,7 @@ def totalPrice(items: List[Item]): BigDecimal =
 
 Try to keep core business logic pure, and push side effects to the boundary.
 
-### Immutability
+#### Immutability
 
 Prefer:
 
@@ -305,7 +313,7 @@ null
 
 Immutability makes code easier to reason about, test, and run safely in concurrent contexts.
 
-### Higher-order Functions
+#### Higher-order Functions
 
 Functions can be passed as values:
 
@@ -318,7 +326,7 @@ This is the foundation of many Scala abstractions.
 
 ---
 
-## 8. For-comprehension
+### 3.3 For-comprehension
 
 Scala's `for` is not just a loop. It is syntax over `map`, `flatMap`, and `withFilter`.
 
@@ -346,7 +354,11 @@ Stream
 
 ---
 
-## 9. Object-oriented Scala and Composition
+## 4. Stage Three: Object Composition and Extensions
+
+Scala is also an object-oriented language. This stage covers the parts of the language that organize code rather than transform values: traits, classes, composition, and extension methods. Treat these as tools for shaping module boundaries, not as a separate paradigm to fight against the functional core.
+
+### 4.1 Object-oriented Scala and Composition
 
 Scala supports object-oriented programming, but idiomatic Scala often favors composition over inheritance.
 
@@ -382,7 +394,7 @@ Avoid deep inheritance trees
 
 ---
 
-## 10. Extension Methods
+### 4.2 Extension Methods
 
 Scala 3 extension methods let you add methods to existing types:
 
@@ -405,7 +417,11 @@ Use them carefully. Too many extension methods can make code harder to understan
 
 ---
 
-## 11. Contextual Abstractions: given and using
+## 5. Stage Four: Contextual Abstractions, Type Classes, and Domain Modeling
+
+This stage is the transition from intermediate to advanced Scala 3. `given`/`using`, type classes, and opaque types are the tools you reach for when you want to express invariants in the type system rather than enforce them with runtime checks.
+
+### 5.1 Contextual Abstractions: given and using
 
 Scala 3 replaces many Scala 2 implicit patterns with clearer `given` and `using` syntax.
 
@@ -435,7 +451,7 @@ This is one of the key transitions from intermediate to advanced Scala 3.
 
 ---
 
-## 12. Type Classes
+### 5.2 Type Classes
 
 A type class defines behavior for a type without requiring that type to inherit from an interface.
 
@@ -459,7 +475,7 @@ You should understand type classes before deeply studying Cats or effect-polymor
 
 ---
 
-## 13. Opaque Types and Domain Modeling
+### 5.3 Opaque Types and Domain Modeling
 
 Opaque types allow you to create domain-specific types with little or no runtime overhead.
 
@@ -492,7 +508,11 @@ This helps prevent primitive obsession, where everything is represented by raw `
 
 ---
 
-## 14. Future and Basic Concurrency
+## 6. Stage Five: Concurrency and Effect Systems
+
+This stage moves from single-threaded transformations to programs that interact with the outside world. Start with `Future` to understand the JVM's standard concurrency story and its limits, then commit to one effect system to learn structured concurrency, typed errors, and resource safety in depth.
+
+### 6.1 Future and Basic Concurrency
 
 Scala's standard library provides `Future` for asynchronous computation:
 
@@ -528,7 +548,7 @@ This prepares you for Cats Effect or ZIO.
 
 ---
 
-## 15. Effect Systems: Cats Effect or ZIO
+### 6.2 Effect Systems: Cats Effect or ZIO
 
 Do not start here too early. First become comfortable with:
 
@@ -543,7 +563,7 @@ basic type classes
 
 Then choose one main effect system.
 
-### Cats Effect / Typelevel Route
+#### Cats Effect / Typelevel Route
 
 Learn:
 
@@ -578,7 +598,7 @@ val program: IO[Unit] =
   yield ()
 ```
 
-### ZIO Route
+#### ZIO Route
 
 Learn:
 
@@ -607,11 +627,15 @@ Choose one route deeply first. Do not try to master Cats Effect and ZIO at the s
 
 ---
 
-## 16. Advanced Type System Topics
+## 7. Stage Six: Advanced Types and JVM Engineering
+
+Scala runs on the JVM, and its type system can express much more than most application code requires. This stage is where you go deep on both: enough type-level fluency to read and design libraries, and enough JVM awareness to debug production systems.
+
+### 7.1 Advanced Type System Topics
 
 Learn these gradually after you are comfortable writing real Scala applications.
 
-### Generics
+#### Generics
 
 ```scala
 def first[A](values: List[A]): Option[A] =
@@ -627,7 +651,7 @@ lower bounds
 context bounds
 ```
 
-### Variance
+#### Variance
 
 ```scala
 trait Producer[+A]
@@ -643,7 +667,7 @@ contravariance
 invariance
 ```
 
-### Higher-kinded Types
+#### Higher-kinded Types
 
 Example:
 
@@ -654,7 +678,7 @@ trait Repository[F[_]]:
 
 This appears in tagless final, Cats, and effect-polymorphic programs.
 
-### Match Types
+#### Match Types
 
 Scala 3 supports type-level pattern matching:
 
@@ -667,7 +691,7 @@ type Elem[X] = X match
 
 This is mostly useful for library authors.
 
-### Inline and Macros
+#### Inline and Macros
 
 Learn later:
 
@@ -683,7 +707,7 @@ Application developers usually need to read common macro usage before they need 
 
 ---
 
-## 17. JVM and Java Interoperability
+### 7.2 JVM and Java Interoperability
 
 Scala 3 runs on the JVM. Advanced Scala developers must understand JVM realities.
 
@@ -718,9 +742,13 @@ No matter how functional your Scala code is, production systems still face JVM i
 
 ---
 
-## 18. Build Tools and Engineering
+## 8. Stage Seven: Engineering Practices and Ecosystem
 
-### sbt
+The final stage covers the tooling, testing, and ecosystem decisions that turn Scala code into shippable systems. None of this is exotic, but Scala's expressiveness makes consistent style, good tests, and well-chosen libraries especially valuable.
+
+### 8.1 Build Tools and Engineering
+
+#### sbt
 
 Learn sbt first:
 
@@ -743,7 +771,7 @@ sbt test
 sbt run
 ```
 
-### Scala CLI and Mill
+#### Scala CLI and Mill
 
 Scala CLI is convenient for learning and scripts. Mill is used by some teams for larger builds. Learn them after sbt basics.
 
@@ -755,7 +783,7 @@ Scala CLI second
 Mill as needed
 ```
 
-### Formatting and Linting
+#### Formatting and Linting
 
 Learn:
 
@@ -770,7 +798,7 @@ Scala is expressive, so consistent formatting and team conventions matter a lot.
 
 ---
 
-## 19. Testing
+### 8.2 Testing
 
 Common testing tools:
 
@@ -807,9 +835,9 @@ normalizing twice gives the same result as normalizing once
 
 ---
 
-## 20. Web, Database, and Streaming Ecosystem
+### 8.3 Web, Database, and Streaming Ecosystem
 
-### Typelevel Route
+#### Typelevel Route
 
 Common stack:
 
@@ -832,7 +860,7 @@ very composable
 steeper learning curve
 ```
 
-### ZIO Route
+#### ZIO Route
 
 Common stack:
 
@@ -854,7 +882,7 @@ environment-based dependency management
 strong consistency within the ecosystem
 ```
 
-### Actor and Stream Route
+#### Actor and Stream Route
 
 For actor systems and distributed applications, learn:
 
@@ -1892,9 +1920,11 @@ The principle:
 
 ---
 
-## Part 7: Stage-based Skill Goals
+## Part 7: Skill Levels by Project Cluster
 
-## Beginner Stage: Projects 1 to 3
+The Stage One through Stage Seven structure above describes the **knowledge map**. The clusters below describe what skills you should have practiced after finishing the corresponding **projects**.
+
+## Beginner Level: Projects 1 to 3
 
 You should master:
 
@@ -1910,7 +1940,7 @@ basic testing
 pure functions
 ```
 
-## Intermediate Stage: Projects 4 to 10
+## Intermediate Level: Projects 4 to 10
 
 You should master:
 
@@ -1928,7 +1958,7 @@ JSON
 database access
 ```
 
-## Advanced Stage: Projects 11 to 15
+## Advanced Level: Projects 11 to 15
 
 You should master:
 

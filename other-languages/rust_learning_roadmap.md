@@ -31,35 +31,11 @@ A good Rust developer is not someone who fights the borrow checker forever. A go
 
 ---
 
-## 2. Recommended Learning Order
+## 2. Stage One: Master Rust Syntax and Tooling
 
-A practical order for learning Rust is:
+The first stage is becoming productive in the Rust workflow. Before tackling ownership in depth, you should be able to create projects, run tests, and read the standard tooling output without friction.
 
-```text
-1. Basic syntax, Cargo, crates, and modules
-2. Ownership, borrowing, and moves
-3. References, mutability, and lifetimes
-4. Structs, enums, pattern matching, and traits
-5. Error handling with Result and Option
-6. Collections, iterators, and closures
-7. Smart pointers and interior mutability
-8. Generics and trait bounds
-9. Testing, documentation, rustfmt, and Clippy
-10. File I/O, CLI tools, and serialization
-11. Concurrency with threads, channels, Arc, and Mutex
-12. Async Rust with Tokio or async-std
-13. HTTP services, databases, and production tooling
-14. Performance profiling and memory optimization
-15. Unsafe Rust, FFI, embedded, or WebAssembly specialization
-```
-
-Do not rush into async Rust, macros, or unsafe Rust. Rust becomes much easier once ownership and API design feel natural.
-
----
-
-## 3. Core Language Topics
-
-### 3.1 Cargo and Tooling
+### 2.1 Cargo and Tooling
 
 Learn the standard Rust workflow early:
 
@@ -90,7 +66,11 @@ Rust's tooling is one of its strongest advantages. Treat Cargo, rustfmt, Clippy,
 
 ---
 
-### 3.2 Ownership and Moves
+## 3. Stage Two: Ownership, Borrowing, and Lifetimes
+
+This stage is the heart of Rust's learning curve. Most of what makes Rust unique — and most of what early learners struggle with — lives here. The goal is not to memorize rules, but to develop a feel for designing data ownership so the borrow checker becomes a collaborator.
+
+### 3.1 Ownership and Moves
 
 Ownership is the foundation of Rust.
 
@@ -121,7 +101,7 @@ Should this function take ownership or borrow?
 
 ---
 
-### 3.3 Borrowing and References
+### 3.2 Borrowing and References
 
 Borrowing lets code access data without taking ownership.
 
@@ -153,7 +133,7 @@ This is the beginning of good Rust API design.
 
 ---
 
-### 3.4 Lifetimes
+### 3.3 Lifetimes
 
 Lifetimes describe how long references are valid.
 
@@ -182,7 +162,11 @@ A practical rule:
 
 ---
 
-### 3.5 Structs, Enums, and Pattern Matching
+## 4. Stage Three: Data Modeling and Error Handling
+
+Once ownership feels natural, the next stage is modeling your domain in Rust's type system. This is where Rust starts to feel different from "C with safety": you express invariants as types, replace runtime branches with pattern matching, and treat errors as values.
+
+### 4.1 Structs, Enums, and Pattern Matching
 
 Rust's data modeling power comes from structs and enums.
 
@@ -219,7 +203,7 @@ Learn to model states explicitly instead of using strings, booleans, or magic in
 
 ---
 
-### 3.6 Option and Result
+### 4.2 Option and Result
 
 Rust avoids null and exceptions for normal control flow.
 
@@ -259,7 +243,7 @@ Application boundary code: anyhow can be practical.
 
 ---
 
-### 3.7 Traits and Generics
+### 4.3 Traits and Generics
 
 Traits define shared behavior.
 
@@ -291,7 +275,11 @@ Use generics when performance and compile-time specialization matter. Use trait 
 
 ---
 
-### 3.8 Iterators and Closures
+## 5. Stage Four: Iterators, Smart Pointers, and API Design
+
+This stage is about writing idiomatic Rust at a larger scale: composing transformations with iterators, reaching for smart pointers only when ownership genuinely needs them, and shaping module boundaries that communicate intent. Many ownership headaches at this point are actually API design problems.
+
+### 5.1 Iterators and Closures
 
 Rust iterators are powerful, zero-cost abstractions when used well.
 
@@ -323,7 +311,7 @@ Pay attention to ownership in iterator chains. Many Rust learning problems appea
 
 ---
 
-### 3.9 Smart Pointers and Interior Mutability
+### 5.2 Smart Pointers and Interior Mutability
 
 Eventually you need to understand:
 
@@ -350,7 +338,7 @@ Do not overuse these to avoid learning ownership. Use them when the ownership mo
 
 ---
 
-### 3.10 Modules, Crates, and API Design
+### 5.3 Modules, Crates, and API Design
 
 Rust's module system matters for maintainability.
 
@@ -385,9 +373,11 @@ new       ordinary constructor
 
 ---
 
-## 4. Concurrency and Parallelism
+## 6. Stage Five: Concurrency and Async
 
-### 4.1 Threads and Message Passing
+Rust's type system rules out many concurrency bugs at compile time, but you still need to design ownership and lifetimes deliberately. Start with synchronous threads and channels, then move to async only after the rest of the language feels comfortable.
+
+### 6.1 Threads and Message Passing
 
 Start with standard library threads:
 
@@ -410,7 +400,7 @@ Rust's type system prevents many data races at compile time, but you still need 
 
 ---
 
-### 4.2 Shared State Concurrency
+### 6.2 Shared State Concurrency
 
 Learn:
 
@@ -436,7 +426,7 @@ Important question:
 
 ---
 
-### 4.3 Async Rust
+### 6.3 Async Rust
 
 Async Rust is powerful but complex. Learn it after ownership, traits, and error handling.
 
@@ -467,7 +457,11 @@ Do not block inside async tasks unless you understand `spawn_blocking` or equiva
 
 ---
 
-## 5. Testing and Quality
+## 7. Stage Six: Engineering Practices
+
+Mature Rust code is observable, tested, and measured. This stage is the same kind of work that any production language requires, but Rust's tooling makes it unusually rewarding to invest in early.
+
+### 7.1 Testing and Quality
 
 Learn testing early:
 
@@ -513,7 +507,7 @@ cargo test
 
 ---
 
-## 6. Performance and Memory
+### 7.2 Performance and Memory
 
 Rust gives you low-level control, but you still need measurement.
 
@@ -537,7 +531,11 @@ Important principle:
 
 ---
 
-## 7. Unsafe Rust
+## 8. Stage Seven: Advanced and Specialized Topics
+
+After core Rust, you choose a direction. Unsafe Rust, FFI, embedded, and WebAssembly each have their own learning curves on top of the foundation. Do not start here, and do not try to learn every specialization at once.
+
+### 8.1 Unsafe Rust
 
 Unsafe Rust is advanced. You do not need it for most application development.
 
@@ -566,11 +564,11 @@ Prefer proven crates when possible.
 
 ---
 
-## 8. Web, CLI, Systems, and Specialized Ecosystems
+### 8.2 Web, CLI, Systems, and Specialized Ecosystems
 
 After core Rust, choose one or two directions.
 
-### CLI and Developer Tools
+#### CLI and Developer Tools
 
 Learn:
 
@@ -583,7 +581,7 @@ Learn:
 - file I/O
 - terminal output
 
-### Web Backend
+#### Web Backend
 
 Learn:
 
@@ -597,7 +595,7 @@ Learn:
 - metrics
 - graceful shutdown
 
-### Systems Programming
+#### Systems Programming
 
 Learn:
 
@@ -609,7 +607,7 @@ Learn:
 - binary protocols
 - unsafe boundaries
 
-### WebAssembly
+#### WebAssembly
 
 Learn:
 
@@ -619,7 +617,7 @@ Learn:
 - browser APIs
 - size optimization
 
-### Embedded Rust
+#### Embedded Rust
 
 Learn:
 
@@ -632,7 +630,33 @@ Learn:
 
 ---
 
-## 9. Project Roadmap
+## 9. Recommended Learning Order
+
+A practical order for learning Rust is:
+
+```text
+1. Basic syntax, Cargo, crates, and modules
+2. Ownership, borrowing, and moves
+3. References, mutability, and lifetimes
+4. Structs, enums, pattern matching, and traits
+5. Error handling with Result and Option
+6. Collections, iterators, and closures
+7. Smart pointers and interior mutability
+8. Generics and trait bounds
+9. Testing, documentation, rustfmt, and Clippy
+10. File I/O, CLI tools, and serialization
+11. Concurrency with threads, channels, Arc, and Mutex
+12. Async Rust with Tokio or async-std
+13. HTTP services, databases, and production tooling
+14. Performance profiling and memory optimization
+15. Unsafe Rust, FFI, embedded, or WebAssembly specialization
+```
+
+Do not rush into async Rust, macros, or unsafe Rust. Rust becomes much easier once ownership and API design feel natural.
+
+---
+
+## 10. Project Roadmap
 
 The best way to learn Rust is through small projects that each target a specific set of concepts.
 
@@ -1049,7 +1073,7 @@ Only attempt this after you are comfortable with safe Rust.
 
 ---
 
-## 10. Recommended Project Order
+## 11. Recommended Project Order
 
 ```text
 1. CLI TODO Tool
@@ -1084,7 +1108,7 @@ syntax and tooling
 
 ---
 
-## 11. If Time Is Limited
+## 12. If Time Is Limited
 
 If you only have time for five projects, do these:
 
@@ -1113,7 +1137,7 @@ database access
 
 ---
 
-## 12. Three-Version Method for Every Project
+## 13. Three-Version Method for Every Project
 
 For each project, build it in three passes.
 
@@ -1150,7 +1174,7 @@ Clippy cleanups
 
 ---
 
-## 13. Common Rust Mistakes
+## 14. Common Rust Mistakes
 
 ### Mistake 1: Fighting the Borrow Checker Instead of Redesigning Ownership
 
@@ -1210,7 +1234,7 @@ Most Rust applications need little or no unsafe code. Learn safe Rust deeply bef
 
 ---
 
-## 14. Advanced Rust User Checklist
+## 15. Advanced Rust User Checklist
 
 You are becoming an advanced Rust user when you can:
 
@@ -1237,7 +1261,7 @@ Read and understand production Rust crate APIs.
 
 ---
 
-## 15. Final Advice
+## 16. Final Advice
 
 Rust rewards patience. The early learning curve can feel slower than Go or Python because the compiler forces you to answer design questions that other languages allow you to postpone.
 
