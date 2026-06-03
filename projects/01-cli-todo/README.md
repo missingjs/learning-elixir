@@ -24,9 +24,9 @@ todo remove 1
 
 ## Suggested Versions
 
-1. Store data in memory only
-2. Save data to a file
-3. Add tests and improve parsing
+1. In-memory pure data structure, exercised via IEx (no CLI yet) — focus on the core list functions
+2. Add the CLI shell and file persistence together — neither makes sense without the other
+3. Add tests and improve parsing and error handling
 
 ## Completion Criteria
 
