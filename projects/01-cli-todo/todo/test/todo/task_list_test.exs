@@ -28,9 +28,9 @@ defmodule Todo.TaskListTest do
 
   describe "fetch/2" do
     setup do
-      {list, _id} = TaskList.add(TaskList.new(), "Buy milk")
-      {list, _id2} = TaskList.add(list, "Buy bread")
-      {list, _id3} = TaskList.add(list, "Buy eggs")
+      {list, _} = TaskList.add(TaskList.new(), "Buy milk")
+      {list, _} = TaskList.add(list, "Buy bread")
+      {list, _} = TaskList.add(list, "Buy eggs")
       %{list: list}
     end
 
@@ -51,7 +51,7 @@ defmodule Todo.TaskListTest do
 
   describe "all/1" do
     test "returns empty list when no tasks" do
-      assert [] = TaskList.all(TaskList.new())
+      assert [] == TaskList.all(TaskList.new())
     end
 
     test "returns tasks sorted by id" do
@@ -60,6 +60,40 @@ defmodule Todo.TaskListTest do
       {list, _} = TaskList.add(list, "c")
 
       assert [%Task{id: 1}, %Task{id: 2}, %Task{id: 3}] = TaskList.all(list)
+    end
+  end
+
+  describe "mark_done/2" do
+    setup do
+      {list, _} = TaskList.add(TaskList.new(), "a")
+      {list, _} = TaskList.add(list, "b")
+      {list, _} = TaskList.add(list, "c")
+      %{list: list}
+    end
+
+    test "marks task as done when id exists", %{list: list} do
+      {:ok, list} = TaskList.mark_done(list, 1)
+      assert {:ok, %Task{id: 1, done: true}} = TaskList.fetch(list, 1)
+    end
+
+    test "other tasks remain unchanged", %{list: list} do
+      {:ok, list} = TaskList.mark_done(list, 1)
+      assert {:ok, %Task{id: 2, done: false}} = TaskList.fetch(list, 2)
+      assert {:ok, %Task{id: 3, done: false}} = TaskList.fetch(list, 3)
+    end
+
+    test "is idempotent when marking a task as done", %{list: list} do
+      {:ok, list} = TaskList.mark_done(list, 1)
+      {:ok, list} = TaskList.mark_done(list, 1)  # mark done again
+      assert {:ok, %Task{id: 1, done: true}} = TaskList.fetch(list, 1)
+    end
+
+    test "mark a non-existing task as done", %{list: list} do
+      assert {:error, :not_found} = TaskList.mark_done(list, 999)
+    end
+
+    test "mark a task in an empty task list" do
+      assert {:error, :not_found} = TaskList.mark_done(TaskList.new(), 999)
     end
   end
 end
