@@ -96,4 +96,42 @@ defmodule Todo.TaskListTest do
       assert {:error, :not_found} = TaskList.mark_done(TaskList.new(), 999)
     end
   end
+
+  describe "remove/2" do
+    setup do
+      {list, _} = TaskList.add(TaskList.new(), "a")
+      {list, _} = TaskList.add(list, "b")
+      {list, _} = TaskList.add(list, "c")
+      %{list: list}
+    end
+
+    test "removes task when id exists", %{list: list} do
+      {:ok, list} = TaskList.remove(list, 1)
+      assert {:error, :not_found} = TaskList.fetch(list, 1)
+    end
+
+    test "other tasks remain unchanged", %{list: list} do
+      {:ok, list} = TaskList.remove(list, 1)
+      assert {:ok, %Task{id: 2}} = TaskList.fetch(list, 2)
+      assert {:ok, %Task{id: 3}} = TaskList.fetch(list, 3)
+    end
+
+    test "remove a non-existing task", %{list: list} do
+      assert {:error, :not_found} = TaskList.remove(list, 999)
+    end
+
+    test "remove a task in an empty task list" do
+      assert {:error, :not_found} = TaskList.remove(TaskList.new(), 999)
+    end
+
+    test "remove a task multiple times", %{list: list} do
+      {:ok, list} = TaskList.remove(list, 1)
+      assert {:error, :not_found} = TaskList.remove(list, 1)
+    end
+
+    test "next id is not affected by removing item", %{list: list} do
+      {:ok, list} = TaskList.remove(list, 1)
+      assert {_, 4} = TaskList.add(list, "x")
+    end
+  end
 end
