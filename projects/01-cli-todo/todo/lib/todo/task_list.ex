@@ -16,6 +16,7 @@ defmodule Todo.TaskList do
     {%{list | tasks: Map.put(tasks, id, task), next_id: id + 1}, id}
   end
 
+  @doc "Fetches a task by id. Returns `{:ok, task}` or `{:error, :not_found}`."
   def fetch(%__MODULE__{tasks: tasks}, id) do
     case Map.fetch(tasks, id) do
       {:ok, task} -> {:ok, task}
@@ -23,19 +24,22 @@ defmodule Todo.TaskList do
     end
   end
 
+  @doc "Returns all tasks sorted by id."
   def all(%__MODULE__{tasks: tasks}), do: tasks |> Map.values() |> Enum.sort_by(& &1.id)
 
+  @doc "Marks a task as done by id. Returns `{:ok, updated_list}` or `{:error, :not_found}`."
   def mark_done(%__MODULE__{tasks: tasks} = list, id) do
-    case Map.fetch(tasks, id) do
+    case fetch(list, id) do
       {:ok, task} -> {:ok, %{list | tasks: Map.put(tasks, id, %{task | done: true})}}
-      :error -> {:error, :not_found}
+      {:error, _} = error -> error
     end
   end
 
+  @doc "Removes a task by id. Returns `{:ok, updated_list}` or `{:error, :not_found}`."
   def remove(%__MODULE__{tasks: tasks} = list, id) do
-    case Map.fetch(tasks, id) do
+    case fetch(list, id) do
       {:ok, _task} -> {:ok, %{list | tasks: Map.delete(tasks, id)}}
-      :error -> {:error, :not_found}
+      {:error, _} = error -> error
     end
   end
 end
