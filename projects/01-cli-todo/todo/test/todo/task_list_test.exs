@@ -84,7 +84,8 @@ defmodule Todo.TaskListTest do
 
     test "is idempotent when marking a task as done", %{list: list} do
       {:ok, list} = TaskList.mark_done(list, 1)
-      {:ok, list} = TaskList.mark_done(list, 1)  # mark done again
+      # mark done again
+      {:ok, list} = TaskList.mark_done(list, 1)
       assert {:ok, %Task{id: 1, done: true}} = TaskList.fetch(list, 1)
     end
 

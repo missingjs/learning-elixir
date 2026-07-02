@@ -8,6 +8,12 @@ defmodule Todo.Task do
     * `title` — task description
     * `done` — completion status, defaults to `false`
   """
+  @type t :: %__MODULE__{
+          id: integer(),
+          title: String.t(),
+          done: boolean()
+        }
+
   @enforce_keys [:id, :title]
   defstruct [:id, :title, done: false]
 end
