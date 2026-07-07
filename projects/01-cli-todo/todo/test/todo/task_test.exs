@@ -11,10 +11,10 @@ defmodule Todo.TaskTest do
       }
 
       assert %{
-        "id" => 1,
-        "title" => "First Task",
-        "done" => false
-      } = Task.to_json(task)
+               "id" => 1,
+               "title" => "First Task",
+               "done" => false
+             } = Task.to_json(task)
     end
   end
 
@@ -27,10 +27,10 @@ defmodule Todo.TaskTest do
       }
 
       assert %Task{
-        id: 1,
-        title: "First Task",
-        done: false
-      } = Task.from_json(json_map)
+               id: 1,
+               title: "First Task",
+               done: false
+             } = Task.from_json(json_map)
     end
   end
 end

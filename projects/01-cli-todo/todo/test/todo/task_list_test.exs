@@ -146,13 +146,13 @@ defmodule Todo.TaskListTest do
 
     test "encode to json map in happy path", %{list: list} do
       assert %{
-        "tasks" => %{
-          "1" => %{"title" => "a"},
-          "2" => %{"title" => "b"},
-          "3" => %{"title" => "c"}
-        },
-        "next_id" => 4
-      } = TaskList.to_json(list)
+               "tasks" => %{
+                 "1" => %{"title" => "a"},
+                 "2" => %{"title" => "b"},
+                 "3" => %{"title" => "c"}
+               },
+               "next_id" => 4
+             } = TaskList.to_json(list)
     end
   end
 
@@ -162,19 +162,19 @@ defmodule Todo.TaskListTest do
         "tasks" => %{
           "1" => %{"id" => 1, "title" => "a", "done" => false},
           "2" => %{"id" => 2, "title" => "b", "done" => false},
-          "3" => %{"id" => 3, "title" => "c", "done" => false},
+          "3" => %{"id" => 3, "title" => "c", "done" => false}
         },
         "next_id" => 4
       }
 
       assert %TaskList{
-        next_id: 4,
-        tasks: %{
-          1 => %Task{title: "a"},
-          2 => %Task{title: "b"},
-          3 => %Task{title: "c"},
-        }
-      } = TaskList.from_json(json_map)
+               next_id: 4,
+               tasks: %{
+                 1 => %Task{title: "a"},
+                 2 => %Task{title: "b"},
+                 3 => %Task{title: "c"}
+               }
+             } = TaskList.from_json(json_map)
     end
   end
 end
