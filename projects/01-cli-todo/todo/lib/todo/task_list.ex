@@ -58,48 +58,17 @@ defmodule Todo.TaskList do
   @spec to_json(t()) :: map()
   def to_json(%__MODULE__{tasks: tasks, next_id: next_id} = _list) do
     %{
-      tasks: Map.new(tasks, fn {id, task} -> {Integer.to_string(id), Map.from_struct(task)} end),
-      next_id: next_id
+      "tasks" => Map.new(tasks, fn {id, task} -> {Integer.to_string(id), Task.to_json(task)} end),
+      "next_id" => next_id
     }
   end
 
   @doc "Builds a task list from a parsed JSON map."
-  @spec from_json(map()) :: {:ok, t()} | {:error, :invalid_format}
-  def from_json(json_data) do
-    with {:ok, task_list} <- build_from_json(json_data),
-         :ok <- validate(task_list) do
-      {:ok, task_list}
-    end
-  end
-
-  defp build_from_json(%{"tasks" => tasks, "next_id" => next_id} = _json_data) do
-    try do
-      {:ok,
-       %__MODULE__{
-         tasks: Map.new(tasks, fn {id, task} -> {String.to_integer(id), parse_task!(task)} end),
-         next_id: next_id
-       }}
-    rescue
-      _e in [ArgumentError, KeyError] -> {:error, :invalid_format}
-    end
-  end
-
-  defp build_from_json(_) do
-    {:error, :invalid_format}
-  end
-
-  defp parse_task!(json_data) do
-    attrs = Map.new(json_data, fn {k, v} -> {String.to_existing_atom(k), v} end)
-    struct!(Task, attrs)
-  end
-
-  defp validate(%__MODULE__{tasks: tasks, next_id: next_id} = _task_list) do
-    max_id = tasks |> Map.keys() |> Enum.max(fn -> 0 end)
-
-    if max_id < next_id do
-      :ok
-    else
-      {:error, :invalid_format}
-    end
+  @spec from_json(map()) :: t()
+  def from_json(%{"tasks" => tasks, "next_id" => next_id} = _json_data) do
+    %__MODULE__{
+      tasks: Map.new(tasks, fn {id, task} -> {String.to_integer(id), Task.from_json(task)} end),
+      next_id: next_id
+    }
   end
 end

@@ -135,4 +135,46 @@ defmodule Todo.TaskListTest do
       assert {_, 4} = TaskList.add(list, "x")
     end
   end
+
+  describe "to_json/1" do
+    setup do
+      {list, _} = TaskList.add(TaskList.new(), "a")
+      {list, _} = TaskList.add(list, "b")
+      {list, _} = TaskList.add(list, "c")
+      %{list: list}
+    end
+
+    test "encode to json map in happy path", %{list: list} do
+      assert %{
+        "tasks" => %{
+          "1" => %{"title" => "a"},
+          "2" => %{"title" => "b"},
+          "3" => %{"title" => "c"}
+        },
+        "next_id" => 4
+      } = TaskList.to_json(list)
+    end
+  end
+
+  describe "from_json/1" do
+    test "parse from json map in happy path" do
+      json_map = %{
+        "tasks" => %{
+          "1" => %{"id" => 1, "title" => "a", "done" => false},
+          "2" => %{"id" => 2, "title" => "b", "done" => false},
+          "3" => %{"id" => 3, "title" => "c", "done" => false},
+        },
+        "next_id" => 4
+      }
+
+      assert %TaskList{
+        next_id: 4,
+        tasks: %{
+          1 => %Task{title: "a"},
+          2 => %Task{title: "b"},
+          3 => %Task{title: "c"},
+        }
+      } = TaskList.from_json(json_map)
+    end
+  end
 end
