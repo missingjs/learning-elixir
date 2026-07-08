@@ -113,35 +113,23 @@ defmodule Todo do
   end
 
   def dispatch(task_list, "get", [task_id]) do
-    case Integer.parse(task_id) do
-      {id, ""} ->
-        do_get(task_list, id)
-
-      _ ->
-        IO.puts("Task id '#{task_id}' should be an integer.")
-        {:error, :invalid_task_id}
+    with id <- parse_task_id(task_id),
+         :ok <- validate_task_id(id) do
+      do_get(task_list, id)
     end
   end
 
   def dispatch(task_list, "done", [task_id]) do
-    case Integer.parse(task_id) do
-      {id, ""} ->
-        do_mark_done(task_list, id)
-
-      _ ->
-        IO.puts("Task id '#{task_id}' should be an integer.")
-        {:error, :invalid_task_id}
+    with id <- parse_task_id(task_id),
+         :ok <- validate_task_id(id) do
+      do_mark_done(task_list, id)
     end
   end
 
   def dispatch(task_list, "remove", [task_id]) do
-    case Integer.parse(task_id) do
-      {id, ""} ->
-        do_remove(task_list, id)
-
-      _ ->
-        IO.puts("Task id '#{task_id}' should be an integer.")
-        {:error, :invalid_task_id}
+    with id <- parse_task_id(task_id),
+         :ok <- validate_task_id(id) do
+      do_remove(task_list, id)
     end
   end
 
@@ -163,18 +151,6 @@ defmodule Todo do
 
   defp display_task(%Task{id: id, title: title, done: done} = _task) do
     IO.puts("[#{id}] #{title} [#{task_status_string(done)}]")
-  end
-
-  defp do_remove(task_list, task_id) do
-    case TaskList.remove(task_list, task_id) do
-      {:ok, task_list} ->
-        IO.puts("Task #{task_id} removed")
-        {:changed, task_list}
-
-      {:error, :not_found} ->
-        report_task_not_found(task_id)
-        {:error, :task_not_found}
-    end
   end
 
   defp do_mark_done(task_list, task_id) do
@@ -201,6 +177,18 @@ defmodule Todo do
     end
   end
 
+  defp do_remove(task_list, task_id) do
+    case TaskList.remove(task_list, task_id) do
+        {:ok, task_list} ->
+          IO.puts("Task #{task_id} removed")
+          {:changed, task_list}
+
+        {:error, :not_found} ->
+          report_task_not_found(task_id)
+          {:error, :task_not_found}
+      end
+  end
+
   defp report_task_not_found(task_id) do
     IO.puts("Task #{task_id} not found")
   end
@@ -211,4 +199,21 @@ defmodule Todo do
   defp report_empty_title do
     IO.puts("Task title can not be empty")
   end
+
+  defp parse_task_id(task_id_str) do
+    case Integer.parse(task_id_str) do
+      {task_id, ""} ->
+        task_id
+
+      _ ->
+        IO.puts("Task id '#{task_id_str}' should be an integer.")
+        {:error, :invalid_task_id}
+    end
+  end
+
+  defp validate_task_id(task_id) when is_integer(task_id) and task_id > 0 do
+    :ok
+  end
+
+  defp validate_task_id(_task_id), do: {:error, :invalid_task_id}
 end

@@ -56,6 +56,11 @@ defmodule TodoTest do
       assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "get", ["abc"])
     end
 
+    test "returns invalid_task_id error when task id less than or equal to zero" do
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "get", ["0"])
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "get", ["-1"])
+    end
+
     test "returns missing_argument error when no arguments" do
       assert {:error, :missing_argument} = Todo.dispatch(TaskList.new(), "get", [])
     end
@@ -77,6 +82,11 @@ defmodule TodoTest do
 
     test "returns invalid_task_id error when task id is not integer" do
       assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "done", ["abc"])
+    end
+
+    test "returns invalid_task_id error when task id less than or equal to zero" do
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "done", ["0"])
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "done", ["-1"])
     end
 
     test "returns missing_argument error when no arguments" do
@@ -102,6 +112,11 @@ defmodule TodoTest do
       assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "remove", ["abc"])
     end
 
+    test "returns invalid_task_id error when task id less than or equal to zero" do
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "remove", ["0"])
+      assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "remove", ["-1"])
+    end
+
     test "returns missing_argument error when no arguments" do
       assert {:error, :missing_argument} = Todo.dispatch(TaskList.new(), "remove", [])
     end
@@ -109,5 +124,9 @@ defmodule TodoTest do
     test "returns unknown_argument error when more than one arguments" do
       assert {:error, :unknown_argument} = Todo.dispatch(TaskList.new(), "remove", ["1", "2"])
     end
+  end
+
+  test "dispatch returns unknown_command error when unknown command occurs" do
+    assert {:error, :unknown_command} = Todo.dispatch(TaskList.new(), "foobar", [])
   end
 end
