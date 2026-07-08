@@ -8,5 +8,3 @@ A project-driven learning lab for Elixir and OTP. Instead of reading through boo
 - [projects/README.md](projects/README.md) — the action plan. Ten projects from CLI tool to distributed system, with recommended order and iteration method.
 
 Each project has its own folder under `projects/` with a self-contained README.
-
-> Note: `other-languages/` is a temporary holding area and will be moved out of this repo later.
