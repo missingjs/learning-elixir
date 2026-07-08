@@ -38,7 +38,7 @@ defmodule Todo do
     """)
   end
 
-  @spec dispatch(TaskList.t(), String.t(), [String.t()]) :: TaskList.t()
+  @spec dispatch(TaskList.t(), String.t(), [String.t()]) :: {:changed | :not_changed, TaskList.t()}
   def dispatch(task_list, "add", [title]) when is_binary(title) do
     {task_list, task_id} = TaskList.add(task_list, title)
     IO.puts("Task #{task_id} added")
