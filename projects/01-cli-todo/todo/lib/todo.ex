@@ -8,7 +8,13 @@ defmodule Todo do
   @data_file "./.task_todo"
 
   @type change_status :: :changed | :not_changed
-  @type dispatch_error :: :invalid_task_id | :task_not_found | :unknown_command
+  @type dispatch_error ::
+          :invalid_task_id
+          | :task_not_found
+          | :unknown_command
+          | :missing_argument
+          | :unknown_argument
+          | :empty_title
 
   def main(args) do
     {command, rest} = parse(args)
@@ -44,11 +50,26 @@ defmodule Todo do
 
   @spec dispatch(TaskList.t(), String.t(), [String.t()]) ::
           {change_status(), TaskList.t()} | {:error, dispatch_error()}
-  def dispatch(task_list, "add", [title]) when is_binary(title) do
+  def dispatch(task_list, "add", [title]) when is_binary(title) and title != "" do
     {task_list, task_id} = TaskList.add(task_list, title)
     IO.puts("Task #{task_id} added")
 
     {:changed, task_list}
+  end
+
+  def dispatch(_task_list, "add", [""]) do
+    IO.puts("Task title can not be empty")
+    {:error, :empty_title}
+  end
+
+  def dispatch(_task_list, "add", []) do
+    print_usage()
+    {:error, :missing_argument}
+  end
+
+  def dispatch(_task_list, "add", [_first | _rest]) do
+    print_usage()
+    {:error, :unknown_argument}
   end
 
   def dispatch(task_list, "list", []) do
@@ -57,6 +78,11 @@ defmodule Todo do
     |> Enum.each(&display_task/1)
 
     {:not_changed, task_list}
+  end
+
+  def dispatch(_task_list, "list", _args) do
+    print_usage()
+    {:error, :unknown_argument}
   end
 
   def dispatch(task_list, "get", [task_id]) do
@@ -90,6 +116,16 @@ defmodule Todo do
         IO.puts("Task id '#{task_id}' should be an integer.")
         {:error, :invalid_task_id}
     end
+  end
+
+  def dispatch(_task_list, command, []) when command in ~w(done remove get) do
+    print_usage()
+    {:error, :missing_argument}
+  end
+
+  def dispatch(_task_list, command, [_first | _rest]) when command in ~w(done remove get) do
+    print_usage()
+    {:error, :unknown_argument}
   end
 
   def dispatch(_task_list, command, _rest) do
