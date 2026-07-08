@@ -1,4 +1,11 @@
 defmodule Todo.Store do
+  @moduledoc """
+  JSON file persistence for the task list.
+
+  Reads and writes a `Todo.TaskList` to disk so data survives between CLI runs.
+  If no data file exists yet, `load!/1` returns an empty task list.
+  """
+
   alias Todo.TaskList
 
   @spec save!(

@@ -27,7 +27,7 @@ defmodule Todo do
     {command, rest}
   end
 
-  defp print_usage() do
+  defp print_usage do
     IO.puts("""
     Usage:
       todo add <title>     Add a new task

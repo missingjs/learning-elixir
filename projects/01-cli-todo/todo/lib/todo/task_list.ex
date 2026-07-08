@@ -14,7 +14,7 @@ defmodule Todo.TaskList do
 
   @doc "Returns a new empty task list."
   @spec new() :: t()
-  def new(), do: %__MODULE__{}
+  def new, do: %__MODULE__{}
 
   @doc "Adds a task with the given title."
   @spec add(t(), String.t()) :: {t(), integer()}
