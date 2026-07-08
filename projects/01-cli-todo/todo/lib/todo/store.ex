@@ -16,9 +16,13 @@ defmodule Todo.Store do
 
   @spec load!(String.t()) :: TaskList.t()
   def load!(file_path) do
-    file_path
-    |> File.read!()
-    |> Jason.decode!()
-    |> TaskList.from_json()
+    if File.exists?(file_path) do
+      file_path
+      |> File.read!()
+      |> Jason.decode!()
+      |> TaskList.from_json()
+    else
+      TaskList.new()
+    end
   end
 end
