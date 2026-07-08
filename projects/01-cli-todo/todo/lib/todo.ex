@@ -19,7 +19,7 @@ defmodule Todo do
 
   defp parse([]) do
     print_usage()
-    System.halt(1)
+    System.halt(0)
   end
 
   defp parse(args) do
