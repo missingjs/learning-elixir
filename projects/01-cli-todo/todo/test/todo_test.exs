@@ -23,8 +23,12 @@ defmodule TodoTest do
       assert {:error, :unknown_argument} = Todo.dispatch(TaskList.new(), "add", ["a", "b"])
     end
 
-    test "returns empty_title error when title argument is empty string" do
+    test "returns empty_title error when title is empty string" do
       assert {:error, :empty_title} = Todo.dispatch(TaskList.new(), "add", [""])
+    end
+
+    test "returns empty_title error when title only contains white space" do
+      assert {:error, :empty_title} = Todo.dispatch(TaskList.new(), "add", ["  \n"])
     end
   end
 

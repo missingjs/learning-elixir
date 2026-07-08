@@ -71,14 +71,21 @@ defmodule Todo do
   @spec dispatch(TaskList.t(), String.t(), [String.t()]) ::
           {change_status(), TaskList.t()} | {:error, dispatch_error()}
   def dispatch(task_list, "add", [title]) when is_binary(title) and title != "" do
-    {task_list, task_id} = TaskList.add(task_list, title)
-    IO.puts("Task #{task_id} added")
+    case String.trim(title) do
+      "" ->
+        report_empty_title()
+        {:error, :empty_title}
 
-    {:changed, task_list}
+      trimmed_title ->
+        {task_list, task_id} = TaskList.add(task_list, trimmed_title)
+        IO.puts("Task #{task_id} added")
+
+        {:changed, task_list}
+    end
   end
 
   def dispatch(_task_list, "add", [""]) do
-    IO.puts("Task title can not be empty")
+    report_empty_title()
     {:error, :empty_title}
   end
 
@@ -200,4 +207,8 @@ defmodule Todo do
 
   defp task_status_string(false), do: "TODO"
   defp task_status_string(true), do: "DONE"
+
+  defp report_empty_title do
+    IO.puts("Task title can not be empty")
+  end
 end
