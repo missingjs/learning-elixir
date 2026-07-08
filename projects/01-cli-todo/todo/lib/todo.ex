@@ -17,7 +17,16 @@ defmodule Todo do
           | :empty_title
 
   def main(args) do
-    {command, rest} = parse(args)
+    case parse_args(args) do
+      {"", []} ->
+        print_usage()
+
+      {command, rest} ->
+        run(command, rest)
+    end
+  end
+
+  defp run(command, rest) do
     task_list = Store.load!(@data_file)
 
     case dispatch(task_list, command, rest) do
@@ -27,14 +36,13 @@ defmodule Todo do
     end
   end
 
-  defp parse([]) do
-    print_usage()
-    System.halt(0)
-  end
+  defp parse_args([]), do: {"", []}
 
-  defp parse(args) do
-    {_opts, [command | rest], _invalid} = OptionParser.parse(args, strict: [])
-    {command, rest}
+  defp parse_args(args) do
+    case OptionParser.parse(args, strict: []) do
+      {_opts, [command | rest], _invalid} -> {command, rest}
+      _ -> {"", []}
+    end
   end
 
   defp print_usage do
