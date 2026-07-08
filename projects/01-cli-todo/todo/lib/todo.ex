@@ -27,8 +27,20 @@ defmodule Todo do
   end
 
   defp run(command, rest) do
-    task_list = Store.load!(@data_file)
+    case Store.load(@data_file) do
+      {:ok, task_list} ->
+        execute_command(task_list, command, rest)
 
+      {:error, %Jason.DecodeError{} = decode_error} ->
+        IO.puts("Corrupt data file. Remove #{@data_file} to reset.")
+        {:error, decode_error}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  defp execute_command(task_list, command, rest) do
     case dispatch(task_list, command, rest) do
       {:changed, task_list} -> Store.save!(@data_file, task_list)
       {:not_changed, _task_list} -> :ok

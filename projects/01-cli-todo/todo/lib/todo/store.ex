@@ -8,6 +8,8 @@ defmodule Todo.Store do
 
   alias Todo.TaskList
 
+  @type load_error :: File.posix() | Jason.DecodeError.t()
+
   @spec save!(
           String.t(),
           Todo.TaskList.t()
@@ -21,15 +23,27 @@ defmodule Todo.Store do
     File.write!(file_path, serialized_data)
   end
 
-  @spec load!(String.t()) :: TaskList.t()
-  def load!(file_path) do
-    if File.exists?(file_path) do
-      file_path
-      |> File.read!()
-      |> Jason.decode!()
-      |> TaskList.from_json()
-    else
-      TaskList.new()
+  @spec load(String.t()) :: {:ok, TaskList.t()} | {:error, load_error()}
+  def load(file_path) do
+    case File.read(file_path) do
+      {:ok, content} ->
+        parse_from_binary(content)
+
+      {:error, :enoent} ->
+        {:ok, TaskList.new()}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  defp parse_from_binary(content) when is_binary(content) do
+    case Jason.decode(content) do
+      {:ok, json_data} ->
+        {:ok, TaskList.from_json(json_data)}
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 end
