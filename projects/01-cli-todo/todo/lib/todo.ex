@@ -22,9 +22,12 @@ defmodule Todo do
         print_usage()
 
       {command, rest} ->
-        run(command, rest)
+        handle_result(run(command, rest))
     end
   end
+
+  defp handle_result(:ok), do: :ok
+  defp handle_result({:error, _reason}), do: System.halt(1)
 
   defp run(command, rest) do
     case Store.load(@data_file) do
@@ -36,6 +39,7 @@ defmodule Todo do
         {:error, decode_error}
 
       {:error, error} ->
+        IO.puts("Could not read #{@data_file}: #{inspect(error)}")
         {:error, error}
     end
   end
@@ -44,7 +48,7 @@ defmodule Todo do
     case dispatch(task_list, command, rest) do
       {:changed, task_list} -> Store.save!(@data_file, task_list)
       {:not_changed, _task_list} -> :ok
-      {:error, _reason} -> System.halt(1)
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -179,14 +183,14 @@ defmodule Todo do
 
   defp do_remove(task_list, task_id) do
     case TaskList.remove(task_list, task_id) do
-        {:ok, task_list} ->
-          IO.puts("Task #{task_id} removed")
-          {:changed, task_list}
+      {:ok, task_list} ->
+        IO.puts("Task #{task_id} removed")
+        {:changed, task_list}
 
-        {:error, :not_found} ->
-          report_task_not_found(task_id)
-          {:error, :task_not_found}
-      end
+      {:error, :not_found} ->
+        report_task_not_found(task_id)
+        {:error, :task_not_found}
+    end
   end
 
   defp report_task_not_found(task_id) do
