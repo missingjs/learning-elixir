@@ -97,5 +97,13 @@ defmodule TodoTest do
     test "returns invalid_task_id error when task id is not integer" do
       assert {:error, :invalid_task_id} = Todo.dispatch(TaskList.new(), "remove", ["abc"])
     end
+
+    test "returns missing_argument error when no arguments" do
+      assert {:error, :missing_argument} = Todo.dispatch(TaskList.new(), "remove", [])
+    end
+
+    test "returns unknown_argument error when more than one arguments" do
+      assert {:error, :unknown_argument} = Todo.dispatch(TaskList.new(), "remove", ["1", "2"])
+    end
   end
 end
