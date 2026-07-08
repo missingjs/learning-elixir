@@ -7,13 +7,17 @@ defmodule Todo do
 
   @data_file "./.task_todo"
 
+  @type change_status :: :changed | :not_changed
+  @type dispatch_error :: :invalid_task_id | :task_not_found | :unknown_command
+
   def main(args) do
     {command, rest} = parse(args)
     task_list = Store.load!(@data_file)
 
     case dispatch(task_list, command, rest) do
       {:changed, task_list} -> Store.save!(@data_file, task_list)
-      _ -> :ok
+      {:not_changed, _task_list} -> :ok
+      {:error, _reason} -> System.halt(1)
     end
   end
 
@@ -38,7 +42,8 @@ defmodule Todo do
     """)
   end
 
-  @spec dispatch(TaskList.t(), String.t(), [String.t()]) :: {:changed | :not_changed, TaskList.t()}
+  @spec dispatch(TaskList.t(), String.t(), [String.t()]) ::
+          {change_status(), TaskList.t()} | {:error, dispatch_error()}
   def dispatch(task_list, "add", [title]) when is_binary(title) do
     {task_list, task_id} = TaskList.add(task_list, title)
     IO.puts("Task #{task_id} added")
@@ -55,46 +60,82 @@ defmodule Todo do
   end
 
   def dispatch(task_list, "get", [task_id]) do
-    case TaskList.fetch(task_list, String.to_integer(task_id)) do
-      {:ok, task} -> display_task(task)
-      {:error, :not_found} -> report_task_not_found(task_id)
-    end
+    case Integer.parse(task_id) do
+      {id, ""} ->
+        do_get(task_list, id)
 
-    {:not_changed, task_list}
+      _ ->
+        IO.puts("Task id '#{task_id}' should be an integer.")
+        {:error, :invalid_task_id}
+    end
   end
 
   def dispatch(task_list, "done", [task_id]) do
-    case TaskList.mark_done(task_list, String.to_integer(task_id)) do
-      {:ok, task_list} ->
-        IO.puts("Mark task #{task_id} as DONE")
-        {:changed, task_list}
+    case Integer.parse(task_id) do
+      {id, ""} ->
+        do_mark_done(task_list, id)
 
-      {:error, :not_found} ->
-        report_task_not_found(task_id)
-        {:not_changed, task_list}
+      _ ->
+        IO.puts("Task id '#{task_id}' should be an integer.")
+        {:error, :invalid_task_id}
     end
   end
 
   def dispatch(task_list, "remove", [task_id]) do
-    case TaskList.remove(task_list, String.to_integer(task_id)) do
-      {:ok, task_list} ->
-        IO.puts("Task #{task_id} removed")
-        {:changed, task_list}
+    case Integer.parse(task_id) do
+      {id, ""} ->
+        do_remove(task_list, id)
 
-      {:error, :not_found} ->
-        report_task_not_found(task_id)
-        {:not_changed, task_list}
+      _ ->
+        IO.puts("Task id '#{task_id}' should be an integer.")
+        {:error, :invalid_task_id}
     end
   end
 
   def dispatch(_task_list, command, _rest) do
     IO.puts("Unknown command #{command}")
     print_usage()
-    System.halt(1)
+    {:error, :unknown_command}
   end
 
   defp display_task(%Task{id: id, title: title, done: done} = _task) do
     IO.puts("[#{id}] #{title} [#{task_status_string(done)}]")
+  end
+
+  defp do_remove(task_list, task_id) do
+    case TaskList.remove(task_list, task_id) do
+      {:ok, task_list} ->
+        IO.puts("Task #{task_id} removed")
+        {:changed, task_list}
+
+      {:error, :not_found} ->
+        report_task_not_found(task_id)
+        {:error, :task_not_found}
+    end
+  end
+
+  defp do_mark_done(task_list, task_id) do
+    case TaskList.mark_done(task_list, task_id) do
+      {:ok, task_list} ->
+        IO.puts("Mark task #{task_id} as DONE")
+        {:changed, task_list}
+
+      {:error, :not_found} ->
+        report_task_not_found(task_id)
+        {:error, :task_not_found}
+    end
+  end
+
+  defp do_get(task_list, task_id) do
+    case TaskList.fetch(task_list, task_id) do
+      {:ok, task} ->
+        display_task(task)
+        {:not_changed, task_list}
+
+      {:error, :not_found} ->
+        report_task_not_found(task_id)
+        {:error, :task_not_found}
+    end
   end
 
   defp report_task_not_found(task_id) do
